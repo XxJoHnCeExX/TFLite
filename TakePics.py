@@ -36,7 +36,7 @@ try:
             for y in range (0,3):
                 v.ChangeDutyCycle(vertical[y])
                 time.sleep(2)
-                camera.capture("/home/pi/Servo/Pics/image" + str(pic_index[x][y]) + ".jpg")
+                camera.capture("/home/pi/TFLite/Pics/image" + str(pic_index[x][y]) + ".jpg")
                 print("Picture " + str(pic_index[x][y]) + " taken.")
                 time.sleep(3)
                 

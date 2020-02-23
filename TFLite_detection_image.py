@@ -57,7 +57,7 @@ if (IM_NAME and IM_DIR):
 
 # If neither an image or a folder are specified, default to using 'test1.jpg' for image name
 if (not IM_NAME and not IM_DIR):
-    IM_NAME = 'test1.jpg'
+    IM_NAME = 'cam.jpg'
 
 # Import TensorFlow libraries
 # If tensorflow is not installed, import interpreter from tflite_runtime, else import from regular tensorflow
