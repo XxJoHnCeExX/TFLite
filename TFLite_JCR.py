@@ -133,9 +133,13 @@ floating_model = (input_details[0]['dtype'] == np.float32)
 input_mean = 127.5
 input_std = 127.5
 
+objects = []
+
 # Loop over every image and perform detection
+print("Running object detection...")
 for image_path in images:
 
+    print(image_path[20:])
     # Load image and resize to expected shape [1xHxWx3]
     image = cv2.imread(image_path)
     image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -162,7 +166,7 @@ for image_path in images:
     # Loop over all detections and draw detection box if confidence is above minimum threshold
     for i in range(len(scores)):
         if ((scores[i] > min_conf_threshold) and (scores[i] <= 1.0)):
-            print("Detected Item # " + str(i + 1))
+            print("    Detected Item #" + str(i + 1))
 
             # Get bounding box coordinates and draw box
             # Interpreter can return coordinates that are outside of image dimensions, need to force them to be within image using max() and min()
@@ -175,19 +179,38 @@ for image_path in images:
 
             # Draw label
             object_name = labels[int(classes[i])] # Look up object name from "labels" array using class index
-            print("\tObject: " + object_name + ", Accuracy: " + str(int(scores[i]*100)))
             label = '%s: %d%%' % (object_name, int(scores[i]*100)) # Example: 'person: 72%'
             labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.7, 2) # Get font size
             label_ymin = max(ymin, labelSize[1] + 10) # Make sure not to draw label too close to top of window
             cv2.rectangle(image, (xmin, label_ymin-labelSize[1]-10), (xmin+labelSize[0], label_ymin+baseLine-10), (255, 255, 255), cv2.FILLED) # Draw white box to put label text in
             cv2.putText(image, label, (xmin, label_ymin-7), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 2) # Draw label text
-
+            
+            print("\tObject: " + object_name + ", Accuracy: " + str(int(scores[i]*100)))
+            
+            #Adding to the list
+            isInList = False
+            for k in range(len(objects)):
+                if(str(object_name) == str(objects[k])):
+                    #print(objects[k][1])
+                    isInList = True
+            if(isInList == False):
+                objects.append((object_name, int(scores[i]*100)))
+            
+            #Writing to text file
+            objects_file = open("objects.txt", "w")
+            for item in objects:
+                objects_file.write(str(item) + "\n")
+            objects_file.close()
+            
+            
     # All the results have been drawn on the image, now display the image
     cv2.imshow('Object detector', image)
 
     # Press any key to continue to next image, or press 'q' to quit
     if cv2.waitKey(0) == ord('q'):
         break
+
+print(objects)
 
 # Clean up
 cv2.destroyAllWindows()
