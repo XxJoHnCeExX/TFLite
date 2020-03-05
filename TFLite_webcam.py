@@ -89,7 +89,7 @@ resW, resH = args.resolution.split('x')
 imW, imH = int(resW), int(resH)
 use_TPU = args.edgetpu
 
-MODEL_NAME = 'Sample_TFLite_model'
+MODEL_NAME = 'TFLite_model'
 
 # Import TensorFlow libraries
 # If tensorflow is not installed, import interpreter from tflite_runtime, else import from regular tensorflow

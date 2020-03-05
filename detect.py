@@ -11,7 +11,7 @@ import glob
 import importlib.util
 
 # Define variables
-MODEL_NAME = 'Sample_TFLite_model'
+MODEL_NAME = 'TFLite_model'
 GRAPH_NAME = 'detect.tflite'
 LABELMAP_NAME = 'labelmap.txt'
 min_conf_threshold = 0.5
