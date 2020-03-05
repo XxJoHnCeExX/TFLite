@@ -1,0 +1,20 @@
+Basic Commands:
+-shut down: sudo shutdown -h now
+-reboot: sudo reboot -h now
+-settings: sudo raspi-config
+-update: sudo apt-get update
+-upgrade: sudo apt-get upgrade
+-create a folder/directory: mkdir [name]
+-check OS: cat /etc/os-release
+
+Coding:
+-accessing folder: cd /home/pi/Documents
+-create source file: sudo nano [filename].c
+-view source file: cat [filename].c
+-compiling a program: gcc -o [filename] [filename].c
+-running a program: sudo ./[filename]
+
+Camera Setup:
+-install packages: sudo apt-get python3-picamera
+-camera connection: vcgencmd get_camera
+-take picture: raspistill -o cam.jpg
