@@ -30,7 +30,7 @@ parser.add_argument('--graph', help='Name of the .tflite file, if different than
 parser.add_argument('--labels', help='Name of the labelmap file, if different than labelmap.txt',
                     default='labelmap.txt')
 parser.add_argument('--threshold', help='Minimum confidence threshold for displaying detected objects',
-                    default=0.5)
+                    default=0.9)
 parser.add_argument('--image', help='Name of the single image to perform detection on. To run detection on multiple images, use --imagedir',
                     default=None)
 parser.add_argument('--imagedir', help='Name of the folder containing images to perform detection on. Folder must contain only images.',
@@ -58,6 +58,7 @@ if (IM_NAME and IM_DIR):
 # If neither an image or a folder are specified, default to using 'test1.jpg' for image name
 if (not IM_NAME and not IM_DIR):
     IM_NAME = 'sample.jpg'
+    #IM_DIR = 'Pics'
 
 # Import TensorFlow libraries
 # If tensorflow is not installed, import interpreter from tflite_runtime, else import from regular tensorflow

@@ -61,8 +61,7 @@ input_mean = 127.5
 input_std = 127.5
 
 # Create an array for storing detect objects and respective accuracy
-numFound = 0
-sumAverages = 0
+objects = []
 
 # Loop over every image and perform detection
 print("Running object detection...")
@@ -89,7 +88,7 @@ for image_path in images:
     classes = interpreter.get_tensor(output_details[1]['index'])[0] # Class index of detected objects
     scores = interpreter.get_tensor(output_details[2]['index'])[0] # Confidence of detected objects
 
-    # Loop over all detections
+    # Loop over all detections and draw detection box if confidence is above minimum threshold
     for i in range(len(scores)):
         if ((scores[i] > min_conf_threshold) and (scores[i] <= 1.0)):
             object_name = labels[int(classes[i])] # Look up object name from "labels" array using class index
@@ -97,24 +96,27 @@ for image_path in images:
             
             print("    Detected Item #" + str(i + 1))
             print("\tObject: " + object_name + ", Accuracy: " + str(accuracy))
-               
-            numFound = numFound + 1
-            sumAverages += int(scores[i]*100)
+            
+            # Averaging the values
+            isInList = False
+            for k in range(len(objects)):
+                if(str(object_name) == str(objects[k][0])):
+                    isInList = True
+                    print("Is already in list")
+                    
+            if(isInList == False):
+                objects.append((object_name, int(scores[i]*100)))
+                print("Not in list, adding now")
+            
+            # Writing to text file
+            objects_file = open("objects.txt", "w")
+            for item in objects:
+                objects_file.write(str(item) + "\n")
+            objects_file.close()
             
 
-# Averaging the values and writing to the text file
-totalAverage = sumAverages / numFound
-print("\nsumAverages: " + str(sumAverages))
-print("numFound: " + str(numFound))
-print("totalAverage: " + str(totalAverage))
-
-objects_file = open("objects.txt", "w")
-objects_file.write(object_name + "," + str(numFound) + "," + str(totalAverage) + "\n")
-objects_file.close()
-
-print(object_name + "," + str(numFound) + "," + str(totalAverage) + "\n")           
+print(objects)
 
 # Clean up
 cv2.destroyAllWindows()
-
 
