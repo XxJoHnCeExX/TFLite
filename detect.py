@@ -11,7 +11,7 @@ import glob
 import importlib.util
 
 # Define variables
-MODEL_NAME = 'TFLite_model'
+MODEL_NAME = 'Parrot_model'
 GRAPH_NAME = 'detect.tflite'
 LABELMAP_NAME = 'labelmap.txt'
 min_conf_threshold = 0.9
@@ -65,54 +65,62 @@ numFound = 0
 sumAverages = 0
 
 # Loop over every image and perform detection
-print("Running object detection...")
-for image_path in images:
-    print(image_path[21:]) # Print image name
-    
-    # Load image and resize to expected shape [1xHxWx3]
-    image = cv2.imread(image_path)
-    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    imH, imW, _ = image.shape
-    image_resized = cv2.resize(image_rgb, (width, height))
-    input_data = np.expand_dims(image_resized, axis=0)
+print("STEP 2 OF 3: Running object detection...")
 
-    # Normalize pixel values if using a floating model (i.e. if model is non-quantized)
-    if floating_model:
-        input_data = (np.float32(input_data) - input_mean) / input_std
+try:
+    for image_path in images:
+        print(image_path[21:]) # Print image name
+        
+        # Load image and resize to expected shape [1xHxWx3]
+        image = cv2.imread(image_path)
+        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        imH, imW, _ = image.shape
+        image_resized = cv2.resize(image_rgb, (width, height))
+        input_data = np.expand_dims(image_resized, axis=0)
 
-    # Perform the actual detection by running the model with the image as input
-    interpreter.set_tensor(input_details[0]['index'],input_data)
-    interpreter.invoke()
+        # Normalize pixel values if using a floating model (i.e. if model is non-quantized)
+        if floating_model:
+            input_data = (np.float32(input_data) - input_mean) / input_std
 
-    # Retrieve detection results
-    boxes = interpreter.get_tensor(output_details[0]['index'])[0] # Bounding box coordinates of detected objects
-    classes = interpreter.get_tensor(output_details[1]['index'])[0] # Class index of detected objects
-    scores = interpreter.get_tensor(output_details[2]['index'])[0] # Confidence of detected objects
+        # Perform the actual detection by running the model with the image as input
+        interpreter.set_tensor(input_details[0]['index'],input_data)
+        interpreter.invoke()
 
-    # Loop over all detections
-    for i in range(len(scores)):
-        if ((scores[i] > min_conf_threshold) and (scores[i] <= 1.0)):
-            object_name = labels[int(classes[i])] # Look up object name from "labels" array using class index
-            accuracy = int(scores[i]*100) # Get accuracy from scores
-            
-            print("    Detected Item #" + str(i + 1))
-            print("\tObject: " + object_name + ", Accuracy: " + str(accuracy))
-               
-            numFound = numFound + 1
-            sumAverages += int(scores[i]*100)
-            
+        # Retrieve detection results
+        boxes = interpreter.get_tensor(output_details[0]['index'])[0] # Bounding box coordinates of detected objects
+        classes = interpreter.get_tensor(output_details[1]['index'])[0] # Class index of detected objects
+        scores = interpreter.get_tensor(output_details[2]['index'])[0] # Confidence of detected objects
 
-# Averaging the values and writing to the text file
-totalAverage = sumAverages / numFound
-print("\nsumAverages: " + str(sumAverages))
-print("numFound: " + str(numFound))
-print("totalAverage: " + str(totalAverage))
+        # Loop over all detections
+        for i in range(len(scores)):
+            if ((scores[i] > min_conf_threshold) and (scores[i] <= 1.0)):
+                object_name = labels[int(classes[i])] # Look up object name from "labels" array using class index
+                accuracy = int(scores[i]*100) # Get accuracy from scores
+                
+                print("    Detected Item #" + str(i + 1))
+                print("\tObject: " + object_name + ", Accuracy: " + str(accuracy))
+                   
+                numFound = numFound + 1
+                sumAverages += int(scores[i]*100)
+                
 
-objects_file = open("objects.txt", "w")
-objects_file.write(object_name + "," + str(numFound) + "," + str(totalAverage) + "\n")
-objects_file.close()
+    # Averaging the values and writing to the text file
+    if (numFound != 0):
+        totalAverage = sumAverages / numFound
+    else:
+        totalAverage = 0
+    print("\nsumAverages: " + str(sumAverages))
+    print("numFound: " + str(numFound))
+    print("totalAverage: " + str(totalAverage))
 
-print(object_name + "," + str(numFound) + "," + str(totalAverage) + "\n")           
+    objects_file = open("objects.txt", "w")
+    objects_file.write(object_name + "$" + str(numFound) + "$" + str(totalAverage) + "\n")
+    objects_file.close()
+
+except:
+    print ("ERROR: Object detection Unsuccessful.\r\n")
+
+print(object_name + "," + str(numFound) + "," + str(totalAverage) + "\r\n")           
 
 # Clean up
 cv2.destroyAllWindows()

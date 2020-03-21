@@ -25,7 +25,7 @@ pic_index = [
     [12, 13, 14]
 ]
 
-print("Taking pictures...")
+print("STEP 1 OF 3: Taking pictures...")
 
 try:
     with picamera.PiCamera() as camera:
@@ -44,12 +44,11 @@ try:
         v.ChangeDutyCycle(6)
         time.sleep(2)
     
-    print("Pictures taken.")
-
-
-except KeyboardInterrupt:
+    print("Pictures taken.\r\n")
+    
+except:
     GPIO.cleanup()
-    print("Error occured.")
+    print("Error: Pictures could not be taken.\r\n")
 
 h.stop()
 v.stop()
