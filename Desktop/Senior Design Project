@@ -7,45 +7,28 @@ Senior Design Project
 2. Setting up the Camera
 -settings: sudo raspi-config  //& enable the camera
 -install packages: sudo apt-get python3-picamera
--take picture: raspistill -o cam.jpg  //testpip uninstall tensorflow
 
-3. Setting up Tensorflow
-1.(update & upgrade the RPi)
-2.sudo apt-get dist-upgrade
-3.make directory: mkdir tf
-4.go into directory: cd tf
-5a.[copy]: https://github.com/lhelontra/tensorflow-on-arm/releases/download/v2.0.0/tensorflow-2.0.0-cp37-none-linux_armv7l.whl
-5b.wheel file: wget [paste]
-6.tensorboard (or try update/upgrade): pip install --upgrade tensorflow 
-7.tesnorflow: sudo pip3 install tensorflow[press tab]
-8.sudo apt-get install libatlas-base-dev
-9.sudo pip3 install pillow lxml jupyter matplotlib cython
-10.sudo apt-get install python-tk
-11.sudo apt-get install libjpeg-dev libtiff5-dev libjasper-dev libpng12-dev
-12.sudo apt-get install libavcodec-dev libavformate-dev libswscale-dev libv4l-dev
-13.sudo apt-get install libxvidcore-dev libx264-dev
-14.sudo apt-get install qt4-dev-tools
-15.opencv: pip3 install opencv-python
-16.sudo apt-get install protobuf-compiler
-17.go to home directory: cd /home/pi
-18.mkdir tensorflow1
-19.cd tensorflow1
-20.git clone --recurse-submodules https://github.com/tensorflow/models.git
-21.sudo nano ~/.bashrc
-22.add at the bottom: export PYTHONPATH=$PYTHONPATH: /home/pi/tensorflow1/models/research:/home/pi/tensorflow1/models/research/slim
-23.cd tensorflow1/models/research/object_detection
-24a.[copy]: http://download.tensorflow.org/models/object_detection/ssdlite_mobilenet_v2_coco_2018_05_09.tar.gz
-24b.google models: wget [paste]
-25.tar -xzvf ssd[tab]
-26.home directory:cd ~
-27.cd tensorflow1/models/research
-28.protoc object_detection/protos/*.proto --python_out=.
-29a.[copy]: https://raw.githubusercontent.com/EdjeElectronics/TensorFlow-Object-Detection-on-the-Raspberry-Pi/master/Object_detection_picamera.py
-29b.get live python script: wget [paste]
-30.python3 Object_detection_picamera.py //add --usbcam if using usb
+3. Running the shell script
+-in command window, type: bash start.sh
 
-Running program from terminal:
-1.cd tensorflow1/models/research/object_detection
-2.python3 Object_detection_picamera.py
+4. Running a Command Upon Startup
+-sudo nano /etc/profile
+ and add appropriate command at the bottom
+ 
+5. Enabling UART
+-sudo nano /boot/config.txt
+ enable_uart=1
+-sudo reboot
+-sudo systemctl stop serial-g@ttyS0.service
+-sudo systemctl disable serial-getty@ttyS0.service
+-sudo nano /boot/cmdline.txt
+ Remove: console=serial0,115200
+-sudo nano /boot/config.txt
+ Add: dtoverlay=pi3-miniuart-bt
+-sudo reboot
 
-
+6. Enabling Serial
+-sudo raspi-config
+ & enable Serial Port under Interface Options, but not Serial Console
+-sudo pip install pyserial
+-sudo ls /dev/tty*
