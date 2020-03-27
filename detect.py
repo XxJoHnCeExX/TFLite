@@ -107,8 +107,10 @@ try:
     # Averaging the values and writing to the text file
     if (numFound != 0):
         totalAverage = sumAverages / numFound
+        objectFound = object_name
     else:
         totalAverage = 0
+        objectFound = "null"
     print("\nsumAverages: " + str(sumAverages))
     print("numFound: " + str(numFound))
     print("totalAverage: " + str(totalAverage))
@@ -119,6 +121,9 @@ try:
 
 except:
     print ("ERROR: Object detection Unsuccessful.\r\n")
+    objects_file = open("objects.txt", "w")
+    objects_file.write("null$null$null\n")
+    objects_file.close()
 
 print(object_name + "," + str(numFound) + "," + str(totalAverage) + "\r\n")           
 
